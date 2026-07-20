@@ -1,4 +1,4 @@
-// VEC.tor — 3‑Geräte‑Vector‑Leitung (PQ, PX, PR)
+// VEC.tor — universeller Vector-Kanal für PQ, PX, PR
 
 const VEC = {
     PX: { device: "Apple",  id: "PX-APPLE",  state: "ACTIVE" },
@@ -20,7 +20,9 @@ const VEC = {
     },
 
     recv(packet) {
-        packet.end = "OK";   // TERMINIERUNG
+        packet.end = "OK";   // Terminierung
         return packet;
     }
 };
+
+export default VEC;
