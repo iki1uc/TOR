@@ -2,149 +2,47 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>TOR – Vector Engine</title>
+<title>Vector System – Index</title>
+
 <style>
     body { background:#0a0a0a; color:#e0e0e0; font-family:Consolas, monospace; padding:20px; }
     h1 { color:#00e0ff; }
-    h2 { color:#00c0ff; }
     pre { background:#111; padding:15px; border-left:4px solid #00e0ff; }
-    .block { margin-bottom:40px; }
+    button {
+        background:#00e0ff; border:none; padding:10px 20px;
+        font-family:Consolas; cursor:pointer; margin-top:10px;
+    }
 </style>
 </head>
+
 <body>
 
-<h1>TOR – Vector Engine</h1>
-<p>Aktueller Stand: Vollständige Pool-Struktur geladen. TOR ist bereit für 5u → 4u → OneDrive → Vector.</p>
+<h1>Vector System – Index</h1>
+<p>Dieses Modul lädt <strong>VEC.tor</strong> und ermöglicht PQ ↔ PX ↔ PR Routing.</p>
 
-<div class="block">
-<h2>TOR Core Pool</h2>
-<pre>
-TOR.pool.core = {
-  ncylinder      : "tmp.outer",
-  whirl          : "whrl-tech",
-  beam_points    : true,
-  rotation       : "3-6-9-0-3",
-  ki_respo       : 327,
-  vector_rights  : "temp-slot",
-  grant_mode     : "auto",
-  revoke_mode    : "on-close"
-}
-</pre>
-</div<div class="block">
-<h2>TOR / ROOT 9×9 – Kommunikationsmatrix</h2>
-<pre>
-TOR.ROOT.9x9 = {
-  mode: "COMM",
-  type: "AXIOM",
-  version: "9×9",
+<pre id="output">Vector-System bereit…</pre>
 
-  send: ["S1","S2","S3","S4","S5","S6","S7","S8","S9"],
-  recv: ["R1","R2","R3","R4","R5","R6","R7","R8","R9"],
+<button id="testBtn">Vector-Test ausführen</button>
 
-  axiom3: ["h1","e3","o6"],
-  axiom4: ["h1","e3","o6","o9"],
+<script type="module">
+    import VEC from "./VEC.tor";
 
-  ultra: ["b12","w128","win∞"],
+    // TOR / System / Vector-Bindung
+    const System = {
+        vec: VEC,
+        route(from, to, data) {
+            const packet = this.vec.send(from, to, data);
+            return this.vec.recv(packet);
+        }
+    };
 
-  safety: "NO-ROOT",
-  bridge: "READ-ONLY",
-  tmp_axiom: "3ECK/4ECK",
-  state: "STABLE"
-}
-</pre>
-</div>
-
-
-<div class="block">
-<h2>OCTACORE Pool</h2>
-<pre>
-TOR.pool.octacore = {
-  axes     : ["N","S","E","W","UP","DOWN","IN","OUT"],
-  pipe     : "OCTACORE-PIPE",
-  routing  : "WURMLOCH",
-  nc_link  : "NC.link",
-  worm     : "OPEN(NC.link -> WURMLOCH)"
-}
-</pre>
-</div>
-
-<div class="block">
-<h2>4u Competence Pool</h2>
-<pre>
-TOR.pool.4u = {
-  competence_matrix : "4u.matrix",
-  request_filter    : "4u.filter",
-  upstream_channel  : "4u.upstream",
-  vector_slots      : "4u.slots"
-}
-</pre>
-</div>
-
-<div class="block">
-<h2>OneDrive Structure Pool</h2>
-<pre>
-TOR.pool.onedrive = {
-  vector_archive   : "onedrive.vector",
-  run_history      : "onedrive.history",
-  self_adjust      : "onedrive.adjust",
-  octacore_logs    : "onedrive.octacore",
-  wormhole_logs    : "onedrive.worm",
-  nc_link_history  : "onedrive.nc"
-}
-</pre>
-</div>
-
-<div class="block">
-<h2>Gesamtpool</h2>
-<pre>
-TOR.pool = {
-  core      : TOR.pool.core,
-  octacore  : TOR.pool.octacore,
-  four_u    : TOR.pool.4u,
-  onedrive  : TOR.pool.onedrive
-}
-</pre>
-</div>
-
-<div class="block">
-<h2>4u Vorbereitung (Upstream)</h2>
-<pre>
-4u.prepare = {
-  load_matrix     : TOR.pool.4u.competence_matrix,
-  load_filter     : TOR.pool.4u.request_filter,
-  open_upstream   : TOR.pool.4u.upstream_channel,
-  accept_slots    : TOR.pool.4u.vector_slots,
-  state           : "ready"
-}
-</pre>
-</div>
-
-<div class="block">
-<h2>OneDrive Cylinder + WURMLOCH Einlauf</h2>
-<pre>
-OneDrive.cylinder = {
-  entry_point     : "WURMLOCH",
-  nc_link         : TOR.pool.octacore.nc_link,
-  archive_target  : TOR.pool.onedrive.vector_archive,
-  adjust_target   : TOR.pool.onedrive.self_adjust,
-  state           : "open"
-}
-</pre>
-</div>
-
-<div class="block">
-<h2>Vector Durchlauf (GPU-Power)</h2>
-<pre>
-Vector.run = {
-  through_4u      : true,
-  gpu_accel       : "enabled",
-  octacore_axes   : TOR.pool.octacore.axes,
-  wormhole_route  : TOR.pool.octacore.routing,
-  nc_binding      : TOR.pool.octacore.nc_link,
-  output          : "onedrive.vector"
-}
-</pre>
-</div>
+    // UI-Test
+    document.getElementById("testBtn").onclick = () => {
+        const result = System.route("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
+        document.getElementById("output").textContent =
+            JSON.stringify(result, null, 2);
+    };
+</script>
 
 </body>
 </html>
